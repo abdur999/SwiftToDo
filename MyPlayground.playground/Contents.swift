@@ -284,3 +284,46 @@ extension MyData:TaggPersistable{
         try self.data.write(to: url)
     }
 }
+
+class AmazonSevice{
+    private var balance:Float = 0
+    public init(){}
+    func orderPlaced(payment:Float) {
+        balance+=payment
+    }
+    var earnings:Float{
+       return balance
+    }
+}
+class EtsySevice{
+    private var earning:Float = 0
+    public init(){}
+    func itemSold(profit:Float){
+        earning+=profit
+    }
+    var totalSold:Float{
+        return earning
+    }
+}
+
+class PaymentController {
+    let amazonService:AmazonSevice
+    let etsyService:EtsySevice
+    init(amazonService:AmazonSevice,etsyService:EtsySevice){
+        self.amazonService = amazonService
+        self.etsyService = etsyService
+    }
+    func calculateEarnings() -> Float {
+        return amazonService.earnings+etsyService.totalSold
+    }
+}
+
+let amazonService = AmazonSevice()
+let etsyService = EtsySevice()
+let controller = PaymentController(amazonService: amazonService, etsyService: etsyService)
+amazonService.orderPlaced(payment: 100)
+etsyService.itemSold(profit: 10)
+amazonService.orderPlaced(payment: 40)
+print("Total Earned \(controller.calculateEarnings())")
+
+
