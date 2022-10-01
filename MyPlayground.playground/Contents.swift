@@ -352,6 +352,101 @@ etsyService.add(amount:100)
 amazonService.add(amount:50)
 print("Total Earned \(controller.calculateEarnings())")
 
+//any type can conform to protocol
+//can be adopted by class or struct
+
+//Generic are deeply rooted in swift
+//Protocol and generics walk hand in hand
+//Swift collection types show how protocol and generics work together
+
+func equals<T:Equatable>(lhs:T,rhs:T) -> Bool{
+    return lhs == rhs
+}
+
+print(equals(lhs: 10.5, rhs: 10.55))
+print(equals(lhs: 10, rhs: 10))
+print(equals(lhs: "Abdur", rhs: "Abdur"))
+
+//Any type can take input anytype data
+//the class can hold anytype data
+struct Wrapper<T> {
+    var storage:T
+    init(_ value:T){
+        storage = value
+    }
+}
+
+let dWrap = Wrapper(20.0)
+let sWrap = Wrapper("20.0")
+let iWrap = Wrapper(20)
+
+//Associatedtype can hold anytype
+//Data can be of anytype
+protocol TaggableType{
+    associatedtype Content
+    var tag:String{get}
+    var data:Content{get}
+    init(tag:String,data:Content)
+}
+//here Data is type Double
+struct TaggedDouble:TaggableType{
+    var tag:String
+    var data:Double
+}
+//here Data is type String
+struct TaggedString:TaggableType{
+    var tag:String
+    var data:String
+}
+//here Data is type Int
+struct TaggedInt:TaggableType{
+    var tag:String
+    var data:Int
+}
+
+//implement generic stack Protocol
+public protocol StackProtocol{
+    associatedtype E
+    var count:Int{get}
+    var isEmpty:Bool{get}
+    func peek() -> E?
+    mutating func push(_ item:E)
+    mutating func pop() -> E?
+}
+//implement generic stack Struct
+struct Stack<T>: StackProtocol {
+    private var storage = [T]()
+    mutating func push(_ item:T){
+        storage.append(item)
+    }
+    mutating func pop() -> T?{
+        return storage.popLast()
+    }
+    public func peek() -> T? {
+        return storage.last
+    }
+    public var count: Int{return storage.count}
+    public var isEmpty: Bool{return storage.isEmpty}
+    
+    
+}
 
 
+var stringStack = Stack<String>()
+stringStack.push("apple")
+stringStack.push("banana")
+stringStack.push("cucumber")
+stringStack.push("Dry fruit")
+stringStack.push("fig")
+stringStack.push("grapes")
+stringStack.push("hug")
+print(stringStack.pop())
+print(stringStack.peek())
+print(stringStack.pop())
 
+//Error can be of type Custom
+public enum WebserviceErrro:Error{
+    case invalidURL(String)
+    case inavalidPayload(URL)
+    case forwordError(Error)
+}
