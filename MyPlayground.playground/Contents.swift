@@ -285,45 +285,73 @@ extension MyData:TaggPersistable{
     }
 }
 
-class AmazonSevice{
+private class AmazonSevice:Service{
+    var totalProfit: Float{
+        return balance
+    }
+
+    func add(amount:Float) {
+        balance = balance+amount
+    }
+    
     private var balance:Float = 0
     public init(){}
-    func orderPlaced(payment:Float) {
-        balance+=payment
-    }
-    var earnings:Float{
-       return balance
-    }
+   
 }
-class EtsySevice{
-    private var earning:Float = 0
-    public init(){}
-    func itemSold(profit:Float){
-        earning+=profit
-    }
-    var totalSold:Float{
-        return earning
-    }
-}
+private class EtsySevice:Service{
 
+    var totalProfit: Float{
+        return balance
+    }
+    
+    func add(amount:Float) {
+        balance = balance+amount
+    }
+    private var balance:Float = 0
+    public init(){}
+    
+}
+protocol Service{
+    var totalProfit:Float{get}
+    func add(amount:Float)
+}
+//Controller will create object of type based on Service
+//eg, if another kind of object need to add, we need to add another case in enum and implement protocol on that class/struct
 class PaymentController {
-    let amazonService:AmazonSevice
-    let etsyService:EtsySevice
-    init(amazonService:AmazonSevice,etsyService:EtsySevice){
-        self.amazonService = amazonService
-        self.etsyService = etsyService
+    let services:[Service]
+    init(services:[Service]){
+        self.services=services
     }
     func calculateEarnings() -> Float {
-        return amazonService.earnings+etsyService.totalSold
+        services.reduce(0){$0+$1.totalProfit}
     }
 }
 
-let amazonService = AmazonSevice()
-let etsyService = EtsySevice()
-let controller = PaymentController(amazonService: amazonService, etsyService: etsyService)
-amazonService.orderPlaced(payment: 100)
-etsyService.itemSold(profit: 10)
-amazonService.orderPlaced(payment: 40)
+//BASED on service type set Service Type
+//eg, if another kind of object need to add, we need to add another case
+public enum ServiceType{
+    case amazon
+    case etsy
+}
+//Factory method for craete object
+func makeService(service:ServiceType) -> Service{
+    switch(service){
+    case .amazon:
+        return AmazonSevice()
+    case .etsy:
+        return EtsySevice()
+    }
+    
+}
+
+let amazonService = makeService(service:.amazon)
+let etsyService = makeService(service:.etsy)
+let controller = PaymentController(services: [amazonService,etsyService])
+amazonService.add(amount:100)
+etsyService.add(amount:100)
+amazonService.add(amount:50)
 print("Total Earned \(controller.calculateEarnings())")
+
+
 
 
