@@ -38,33 +38,34 @@ func getOccureceOfCharSimultanously(word:[String]) -> String {
     return allWord
 }
 
-
-let myClass = Myclass()
-myClass.closure1(){ name in
+//CLOSURE OBJECT CREATION
+let closure = Closure()
+closure.closure1(){ name in
  print(name)
 }
 // call the closure
-myClass.greet()
+closure.greet()
 
 // closure call
-myClass.greetUser("Delilah")
+closure.greetUser("Delilah")
 
 // closure call
-var result = myClass.findSquare(4)
+var result = closure.findSquare(4)
 
-myClass.grabLunch(search: {
+closure.grabLunch(search: {
   print("Alfredo's Pizza: 2 miles away")
 })
-myClass.grabLunch(message:"Let's go out for lunch")  {
+closure.grabLunch(message:"Let's go out for lunch")  {
       print("Alfredo's Pizza: 2 miles away")
 }
-myClass.grabLunchWithEscaping(message:"Let's go out for lunch"){
+closure.grabLunchWithEscaping(message:"Let's go out for lunch"){
     
 }
 // pass closure without {}
-myClass.display(greet: print("Hello World!"))
+closure.display(greet: print("Hello World!"))
 
-class Myclass {
+//CLOSURE CLASS DECLARATION
+class Closure {
     //Closure with param and return type as Void
     func closure1(name:(String)->Void){
         name("rachita")
@@ -101,3 +102,92 @@ class Myclass {
      greet()
     }
 }
+//THIS PROTOCOL CAN IMPLEMENT IN STRUCT AS WELL AS CLASS
+protocol SampleProtocol { //If we inheri AnyObject protocol then mutating is not needed as inherit AnyObject make the protocl reference type.
+    //Reference type can change Without mutating keyword seeBelow
+    var tag:String {get set}
+    var data:Data{get}
+    static var counter:Int{get}
+    
+    mutating func update(data:Data) -> Bool
+    static func incrementCounter()
+    init(tag:String, data:Data)
+}
+//THIS PROTOCOL CAN IMPLEMENT IN CLASS ONLY
+protocol SampleProtocolAny:AnyObject {
+    var tag:String {get set}
+    var data:Data{get}
+    static var counter:Int{get}
+    
+    func update(data:Data) -> Bool
+    static func incrementCounter()
+    init(tag:String, data:Data)
+}
+//STRUCT IMPLEMENT Protocol
+struct ImplStruct:SampleProtocol{
+    var tag: String
+    
+    var data: Data
+    
+    static var counter: Int = 0
+    
+    mutating func update(data: Data) -> Bool {
+        self.data = data
+        return true
+    }
+    
+    static func incrementCounter() {
+        counter+=1
+    }
+    
+    init(tag: String, data: Data) {
+        self.tag = tag
+        self.data = data
+    }
+    
+    
+}
+//CLASS IMPLEMENT AnyObject Protocol
+class ImplStructAny:SampleProtocolAny{
+    var tag: String
+    
+    var data: Data
+    
+    static var counter: Int = 0
+    
+    func update(data: Data) -> Bool {
+        self.data = data
+        return true
+    }
+    
+    static func incrementCounter() {
+        counter+=1
+    }
+    
+    required init(tag: String, data: Data) {
+        self.tag = tag
+        self.data = data
+    }
+    
+    
+}
+
+
+protocol Encryption {
+    func xor(key:Int8) -> Self?
+}
+//If the sorce implementation(source code) is not available still we can add function
+extension String:Encryption {
+    func xor(key: Int8) -> String? {
+        return String(bytes: self.utf8.map{ $0 ^ UInt8(key) }, encoding: .utf8)
+    }
+}
+
+let source = "Hello World"
+let target = source.xor(key: 42)
+
+print("target is :- ")
+print(target ?? "failed to encode")
+print("target is :- ")
+print(42 ?? "failed to decode")
+
