@@ -191,3 +191,48 @@ print(target ?? "failed to encode")
 print("target is :- ")
 print(42 ?? "failed to decode")
 
+
+protocol Shape{
+    var area:Double{get}
+}
+struct square:Shape{
+    let side:Double
+    
+    var area: Double{
+        return side*side
+    }
+}
+struct Rectangle:Shape{
+    let width:Double
+    let height:Double
+    
+    var area: Double{
+        return width*height
+    }
+}
+struct Rhombus:Shape{
+    let d1:Double
+    let d2:Double
+    var area: Double{
+        return (d1*d2)/2
+    }
+}
+struct Circle:Shape{
+    let radius:Double
+    var area: Double{
+        return 2*(22/7)*radius
+    }
+}
+//create instance of type Solid implementation and assign inside Object of type protocol
+//when we call method depend upon type of object object/method execute accordingly
+//below object initialize of Rectangle type
+let rectangle:Shape = Rectangle(width: 10, height: 20)
+print(rectangle.area)
+
+//below object initialize of Square type
+let square1:Shape = square(side: 10)
+print(square1.area)
+
+//below object initialize of Circle type
+let circle:Shape = Circle(radius: 10)
+print(circle.area)
